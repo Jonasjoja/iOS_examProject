@@ -1,0 +1,6 @@
+framework module Pods_iOS_Exam_Exerlyfe {
+  umbrella header "Pods-iOS_Exam_Exerlyfe-umbrella.h"
+
+  export *
+  module * { export * }
+}
