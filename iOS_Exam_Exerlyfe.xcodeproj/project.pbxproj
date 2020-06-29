@@ -99,7 +99,7 @@
 			isa = PBXGroup;
 			children = (
 				84B96C4824A0EACE00F91352 /* Delegates */,
-				84B96C4724A0EAB100F91352 /* Firebase */,
+				84B96C4924A0EAE300F91352 /* Controllers */,
 				84B96C31249C0CD200F91352 /* Main.storyboard */,
 				84B96C34249C0CD700F91352 /* Assets.xcassets */,
 				84B96C36249C0CD700F91352 /* LaunchScreen.storyboard */,
@@ -113,7 +113,6 @@
 			isa = PBXGroup;
 			children = (
 				84B96C4524A0E1D200F91352 /* FirebaseManager.swift */,
-				84B96C4924A0EAE300F91352 /* Controllers */,
 			);
 			path = Firebase;
 			sourceTree = "<group>";
@@ -123,6 +122,7 @@
 			children = (
 				84B96C2B249C0CD200F91352 /* AppDelegate.swift */,
 				84B96C2D249C0CD200F91352 /* SceneDelegate.swift */,
+				84B96C4724A0EAB100F91352 /* Firebase */,
 				84B96C4C24A106D900F91352 /* Model */,
 			);
 			path = Delegates;
