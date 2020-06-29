@@ -10,35 +10,36 @@ import UIKit
 import FBSDKLoginKit //Import the fb login kit
 
 class ViewController: UIViewController, LoginButtonDelegate {
-
+    
     @IBOutlet weak var profilePicture: UIImageView! //profile pic image
     
     @IBOutlet weak var continueButton: UIButton! //the continue button, should be hidden when not logged in.
     
-   var fbUserId = ""
-    
-    
-    let fbMan = FirebaseManager() //instance of firebasemanager class
-    
-  
+    var fbUserId = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setUpFacebookButton() //Sets up FB login button
+        
+        //Hide continue button initially
+        continueButton.isHidden = true
+        //Default avatar
+        profilePicture.image = #imageLiteral(resourceName: "defaultavatar")
+        
+        //Calling funcs
+        makeProfilePicRound()
+        checkIfLoggedIn() //Initial login check
+    }
+    
+    fileprivate func setUpFacebookButton() {
         //Initialize the login button and add it to the view
         let loginButton = FBLoginButton()
         loginButton.center = view.center
         view.addSubview(loginButton)
-        loginButton.delegate = self //assign delegate, to make the login button funcs work
-        
-        //Hide continue button initially
-        continueButton.isHidden = true
-        
-        //Calling funcs
-        makeProfilePicRound()
-        
-        //Default avatar
-        profilePicture.image = #imageLiteral(resourceName: "defaultavatar")
-        
+        loginButton.delegate = self //Delegate, to make login funcs work
+    }
+    
+    fileprivate func checkIfLoggedIn() {
         //Checks if user is already logged in
         if let token = AccessToken.current,
             !token.isExpired {
@@ -55,7 +56,7 @@ class ViewController: UIViewController, LoginButtonDelegate {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-       let destinationVC = segue.destination as! ChoiceTableViewController //casting and force unwrap cause I know it's there.
+        let destinationVC = segue.destination as! ChoiceTableViewController //casting and force unwrap cause I know it's there.
         destinationVC.retrieveUserId = fbUserId //passing fb user id.
     }
     
@@ -63,12 +64,15 @@ class ViewController: UIViewController, LoginButtonDelegate {
     //What to do when logged in
     func loginButton(_ loginButton: FBLoginButton, didCompleteWith result: LoginManagerLoginResult?, error: Error?) {
         
-        fbUserId = AccessToken.current!.userID //get user id.
+        if AccessToken.current?.userID != nil{ //If user proceeds and succesfully logs in
+            fbUserId = AccessToken.current!.userID
+            //Set profile pic to users profile pic on log in
+            profilePicture.image = getProfPic(fid: AccessToken.current!.userID)
+            continueButton.isHidden = false //continue button shows on completed login
+        } else{ //if user cancels login/error on login just return
+            return
+        }
         
-        //Set profile pic to users profile pic on log in
-        profilePicture.image = getProfPic(fid: AccessToken.current!.userID)
-        
-        continueButton.isHidden = false
     }
     
     //What to do when logged out
@@ -80,7 +84,7 @@ class ViewController: UIViewController, LoginButtonDelegate {
     }
     
     //Function to fetch users profile picture from their user id.
-  func getProfPic(fid: String) -> UIImage? {
+    func getProfPic(fid: String) -> UIImage? {
         if (fid != "") { //if facebook id is not empty
             
             //Get the profilepicture downloaded from facebook graph with provided ID
@@ -100,15 +104,14 @@ class ViewController: UIViewController, LoginButtonDelegate {
     }
     
     fileprivate func makeProfilePicRound() { //makes profile picture round
-          //Hidden initially
-          profilePicture.layer.borderWidth = 5
-          profilePicture.layer.masksToBounds = false
-          profilePicture.layer.borderColor = #colorLiteral(red: 0.1585051715, green: 0.6766349673, blue: 0.7152240276, alpha: 1)
-          profilePicture.layer.cornerRadius = profilePicture.frame.height/2
-          profilePicture.clipsToBounds = true
-      }
-
-
-
+        profilePicture.layer.borderWidth = 5
+        profilePicture.layer.masksToBounds = false
+        profilePicture.layer.borderColor = #colorLiteral(red: 0.1585051715, green: 0.6766349673, blue: 0.7152240276, alpha: 1)
+        profilePicture.layer.cornerRadius = profilePicture.frame.height/2
+        profilePicture.clipsToBounds = true
+    }
+    
+    
+    
 }
 

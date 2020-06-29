@@ -37,10 +37,7 @@ class WorkoutViewController: UIViewController, UIPickerViewDelegate, UIPickerVie
     }()
     
                             //VARS/LETS
-    let fbMan = FirebaseManager() //instance of FirebaseManager class
-
-    //Reference to firestore.
-    let db = Firestore.firestore()
+ 
     
     //retrieving passed data here, have to cause segue is performed before viewDidLoad.
     var retrieveUserId:String! = ""//retrieve fb userid
@@ -54,10 +51,10 @@ class WorkoutViewController: UIViewController, UIPickerViewDelegate, UIPickerVie
     var pulsatingLayer: CAShapeLayer! //Layer for pulsating effect
     //Pickerview & timer intervals
     let timeIntervals = [5,30,60,120]
-    var timerIntervalPicked = 0 //to be set to what is picked
-    var pickerView = UIPickerView()
+
+    static var timerIntervalPicked = 0 //to be set to what is picked, static cause it's used by firebase manager
     
-    var highscore:Int = 0
+    var pickerView = UIPickerView()
     
                         //VIEW DID LOAD
     override func viewDidLoad() {
@@ -72,12 +69,6 @@ class WorkoutViewController: UIViewController, UIPickerViewDelegate, UIPickerVie
 
         timerButtonsStackView.isHidden = true //Initially hidden, untill time is selected.
         submitHighscoreButton.isHidden = true
-    
-        //// how to add data ->
-       // fbMan.addData(userId: retrieveUserId, exercise: retrieveExerciseName, timeInterval: 60, highscore: 60)
-        // fbMan.addData(userId: retrieveUserId, exercise: retrieveExerciseName, timeInterval: 5, highscore: 5)
-        
-       
     }
     
     
@@ -164,9 +155,9 @@ class WorkoutViewController: UIViewController, UIPickerViewDelegate, UIPickerVie
             timeIntervalPick.text = String(timeIntervals[row])
             timeIntervalPick.resignFirstResponder()
             timerButtonsStackView.isHidden = false //Show start/stop/reset when time is selected
-            timerIntervalPicked = timeIntervals[row] //Set var to what is picked.
+        WorkoutViewController.timerIntervalPicked = timeIntervals[row] //Set var to what is picked.
         
-        readData(userId: retrieveUserId, exercise: retrieveExerciseName)
+        FirebaseManager.readHighscoreFromDb(userId: retrieveUserId, exercise: retrieveExerciseName, vc: self)
     }
     
     
@@ -175,7 +166,7 @@ class WorkoutViewController: UIViewController, UIPickerViewDelegate, UIPickerVie
         //repeat every 1 second, target self, will repeat every second. selector is the objC func.
         timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(ActionTimer), userInfo: nil, repeats: true)
         
-        fillProgressCircle(duration: timerIntervalPicked) ////time set to what is picked in pickerview
+        fillProgressCircle(duration: WorkoutViewController.timerIntervalPicked) ////time set to what is picked in pickerview
         //Start animating pulse
         animatePulsatingLayer()
         pulsatingLayer.isHidden = false //Show it when start.
@@ -197,36 +188,16 @@ class WorkoutViewController: UIViewController, UIPickerViewDelegate, UIPickerVie
     
     //Prepare segue
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "woutToHighscore" {
         //Store viewcontroller
         let destinationVC = segue.destination as! HighscoreViewController //casting and force unwrap cause I know it's there.
-        
         //Passing data
         destinationVC.retrieveUserId = retrieveUserId
-        destinationVC.retrieveDocName = retrieveExerciseName + String(timerIntervalPicked)
-        destinationVC.setHowManyReps = Array(highscore...300) //pass an array from highscore to 300.
-    }
-    
-    
-            //READ FROM DB
-    
-    //Should ideally be in FBManager, but async data retrieving issues...
-    func readData(userId: String, exercise: String){
-        //Reference to specific document, collection is created named after FB user id, document named after exercise name.
-        let docRef = db.collection(userId).document(exercise + String(timerIntervalPicked))
-        
-        docRef.getDocument() { (document, error) in
-            if let document = document, document.exists { //if the document exists
-                self.highscore = (document.get("Highscore") as! Int)
-                
-                //// let timeInterval = (document.get("TimeInterval") as! Int)
-                //set label text to highscore read
-                self.highscoreLabel.text = "Highscore: " + String(self.highscore)
-            } else if document!.exists == false
-            {
-                self.highscoreLabel.text = "No highscore yet!" //// if it doesnt, no highscore yet
-            }
+            destinationVC.retrieveDocName = retrieveExerciseName + String(WorkoutViewController.timerIntervalPicked)
+            destinationVC.setHowManyReps = Array(FirebaseManager.highscore...300) //pass an array from highscore to 300.
         }
     }
+    
     
     //Object C function to handle timer
     @objc func ActionTimer(){
@@ -235,7 +206,7 @@ class WorkoutViewController: UIViewController, UIPickerViewDelegate, UIPickerVie
         
         //stop timer and change label text when time picked is hit.
         //and present option to submit a highscore.
-        if timerDisplayed == timerIntervalPicked {
+        if timerDisplayed == WorkoutViewController.timerIntervalPicked {
             timer.invalidate()
             secondsLabel.text = "DONE!"
             submitHighscoreButton.isHidden = false //Show it when time's up

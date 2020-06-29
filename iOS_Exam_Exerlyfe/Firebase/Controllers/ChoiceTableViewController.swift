@@ -12,19 +12,24 @@ class ChoiceTableViewController: UITableViewController {
     
     //Create array for data
     var exercises : [Exercise] = [] //Empty array of type fighter class
-    var exerciseChosen: String = "" //to be set to the chosen exercise and passed
+    //static cause im using it in tabbar part of app too.
+    static var exerciseChosen: String = "" //to be set to the chosen exercise and passed
     var exerciseChosenImg: UIImage? = nil
     var retrieveUserId: String = "" //to be userId retrieved from VC, to be passed on further
-
+    
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        setUpBackground()
+        exercises = createArray() //fill the array with func
+    }
+    
+    fileprivate func setUpBackground() {
         //Setting the background
         let bgView = UIImageView(frame: tableView.bounds)
         bgView.image = UIImage(named: "2")
         tableView.backgroundView = bgView
-        
-        exercises = createArray() //fill the array with func
     }
     
     func createArray() -> [Exercise] { //func is gonna create the exercise object and throw it into temp array
@@ -37,9 +42,9 @@ class ChoiceTableViewController: UITableViewController {
         let exercise3 = Exercise(image: #imageLiteral(resourceName: "lunge"), exerciseName: "Lunge")
         let exercise4 = Exercise(image: #imageLiteral(resourceName: "sidelunge"), exerciseName: "Side Lunge")
         let exercise5 = Exercise(image: #imageLiteral(resourceName: "run"), exerciseName: "Run")
-        let exercise6 = Exercise(image: #imageLiteral(resourceName: "dumbellCurl"), exerciseName: "Dumbell Curl")
+        let exercise6 = Exercise(image: #imageLiteral(resourceName: "dumbellCurl"), exerciseName: "Dumbbell Curl")
         let exercise7 = Exercise(image: #imageLiteral(resourceName: "barbellCurl"), exerciseName: "Barbell Curl")
-           
+        
         //append to temp array
         tempExercises.append(exercise1)
         tempExercises.append(exercise2)
@@ -48,40 +53,37 @@ class ChoiceTableViewController: UITableViewController {
         tempExercises.append(exercise5)
         tempExercises.append(exercise6)
         tempExercises.append(exercise7)
-        
-            
-        
         //return temp array
         return tempExercises
-       }
+    }
     
-
+    
     // MARK: - Table view data source
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // as many rows in section as the length of exercise array.
         return exercises.count
     }
-
+    
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-
+        
         // Configure the cell
         let exercise = exercises[indexPath.row] //whatever is at that row
-         
-         //making sure I get custom cell
-         let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier") as! ExerciseTableViewCell
-
-         //setting it by calling method in the ExerciseTableViewCell class
-         cell.setExercise(exercise: exercise) // pass in exercise
-         
+        
+        //making sure I get custom cell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier") as! ExerciseTableViewCell
+        
+        //setting it by calling method in the ExerciseTableViewCell class
+        cell.setExercise(exercise: exercise) // pass in exercise
+        
         return cell //return the cell.
     }
-
-
+    
+    
     // MARK: - Navigation
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        exerciseChosen = exercises[indexPath.row].exerciseName //sets var to the exercise name of clicked row.
+        ChoiceTableViewController.exerciseChosen = exercises[indexPath.row].exerciseName //sets var to the exercise name of clicked row.
         exerciseChosenImg = exercises[indexPath.row].image //same for image
         
         // Perform segue created in storyboard.
@@ -93,9 +95,9 @@ class ChoiceTableViewController: UITableViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         //Store viewcontroller
         let destinationVC = segue.destination as! WorkoutViewController //casting and force unwrap cause I know it's there.
-        destinationVC.retrieveExerciseName = exerciseChosen //Passing the data here, through variable set in didSelectRow
+        destinationVC.retrieveExerciseName = ChoiceTableViewController.exerciseChosen //Passing the data here, through variable set in didSelectRow
         destinationVC.retrieveExerciseImage = exerciseChosenImg //same for image
         destinationVC.retrieveUserId = retrieveUserId //passing on userId further
     }
-
+    
 }

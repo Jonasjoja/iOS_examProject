@@ -13,22 +13,77 @@ import Firebase
 class FirebaseManager{
     
     //Reference to firestore.
-    let db = Firestore.firestore()
+    private static let db = Firestore.firestore()
+    //Store highscore
+    static var highscore: Int = 0
+    //Store video url
+    static var videoUrl: URL? = nil
+    
+    //Collection reference
+    private static let instructionsCollection = "Instructions"
 
     //Add data to firestore
-    func addData(userId : String, exerciseAndTime : String, highscore : Int, currentView: UIView) {
+   static func addData(userId : String, exerciseAndTime : String, highscore : Int, currentView: UIView) {
         //Will create a document in users collection named <exercise><timeInterval>
         db.collection(userId).document(exerciseAndTime)
             .setData(["Highscore" : highscore]) { error in //Error handling.
                 if let error = error {
-                    self.showToast(view: currentView, message: "Error!")
+                    showToast(view: currentView, message: "Error! \(error)")
                 } else {
-                    self.showToast(view: currentView, message: "Submitted!")
+                    showToast(view: currentView, message: "Submitted!")
                 }
         }
     }
-    //Construction a toast message to be displayed on successful submit
-    func showToast(view: UIView, message: String) {
+    
+        //READ HIGHSCORE FROM DB
+
+    static func readHighscoreFromDb(userId: String, exercise: String, vc:WorkoutViewController){
+        //Reference to specific document, collection is created named after FB user id, document named after exercise name.
+        let docRef = db.collection(userId).document(exercise + String(WorkoutViewController.timerIntervalPicked))
+        
+        docRef.getDocument() { (document, error) in
+            if let document = document, document.exists { //if the document exists
+                highscore = (document.get("Highscore") as! Int)
+                vc.highscoreLabel.text = "Highscore: " + String(highscore) //Set here because here I actually have the data.
+                
+            } else if document!.exists == false{
+                vc.highscoreLabel.text = "No Highscore Yet!"
+            }
+        }
+    }
+    
+    //Gets video url from firebase
+    static func getVideoUrl(exercise: String, vc:HowToViewController){
+        let docRef = db.collection(instructionsCollection).document(exercise)
+        
+        docRef.getDocument { (document, error) in
+            if let document = document, document.exists{
+                videoUrl = URL(string: "https://www.youtube.com/embed/\((document.get("videoUrl") as! String))")
+                vc.webView.load(URLRequest.init(url: videoUrl!))
+                
+            } else if document!.exists == false{
+                vc.webView.isHidden = true
+                vc.instructionLabel.text = "No Instruction Available"
+            }
+        }
+    }
+    
+    static func getMuscleDescription(exercise: String, vc:MusclesViewController){
+        
+     let docRef = db.collection(instructionsCollection).document(exercise)
+        
+        docRef.getDocument { (document, error) in
+            if let document = document, document.exists{
+                vc.descriptionLabel.text = (document.get("Description") as! String)
+            } else if document!.exists == false{
+                vc.descriptionLabel.text = "No Information Available"
+            }
+        }
+    }
+    
+                    //TOAST MESSAGE
+    //Constructing toast message to be displayed on successful submit
+    static func showToast(view: UIView, message: String) {
         let toastLabel = UILabel(frame: CGRect(x: view.frame.size.width/2 - 75, y: view.frame.size.height/2 + 20, width: 150, height: 35))
         toastLabel.backgroundColor = #colorLiteral(red: 0.2745098174, green: 0.4862745106, blue: 0.1411764771, alpha: 1)
         toastLabel.textColor = UIColor.white

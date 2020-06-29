@@ -44,17 +44,12 @@ class HighscoreViewController: UIViewController, UIPickerViewDelegate, UIPickerV
         //Sets label to show previous highscore, which will always be index 0 of array.
         previousHighscoreLabel.text = "Previous: \(setHowManyReps[0])"
         
-        print(setHowManyReps)
-        print(retrieveUserId)
-        print(retrieveDocName)
-
-        // Do any additional setup after loading the view.
     }
     
     
     @IBAction func submitButtonPressed(_ sender: UIButton) {
         //Upload highscore to firebase.
-        fbMan.addData(userId: retrieveUserId, exerciseAndTime: retrieveDocName, highscore: pickedNumberOfReps, currentView: self.view)
+        FirebaseManager.addData(userId: retrieveUserId, exerciseAndTime: retrieveDocName, highscore: pickedNumberOfReps, currentView: self.view)
     
     }
     
