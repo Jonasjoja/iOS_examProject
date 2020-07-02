@@ -42,6 +42,7 @@ class FirebaseManager{
         let docRef = db.collection(userId).document(exercise + String(WorkoutViewController.timerIntervalPicked))
         
         docRef.getDocument() { (document, error) in
+            print(45)
             if let document = document, document.exists { //if the document exists
                 highscore = (document.get("Highscore") as! Int)
                 vc.highscoreLabel.text = "Highscore: " + String(highscore) //Set here because here I actually have the data.
@@ -50,6 +51,7 @@ class FirebaseManager{
                 vc.highscoreLabel.text = "No Highscore Yet!"
             }
         }
+        print(54)
     }
     
     //Gets video url from firebase

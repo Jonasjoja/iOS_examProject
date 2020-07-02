@@ -64,6 +64,21 @@
             </objects>
             <point key="canvasLocation" x="137.68115942028987" y="65.625"/>
         </scene>
+        <!--View Controller-->
+        <scene sceneID="FF1-kX-Urj">
+            <objects>
+                <viewController id="1DF-jg-nNO" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="fI3-wk-Ry1">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <viewLayoutGuide key="safeArea" id="S5B-bY-quK"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="sys-q7-m7V" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-18" y="889"/>
+        </scene>
         <!--Choice Table View Controller-->
         <scene sceneID="0O2-Um-z86">
             <objects>
@@ -276,7 +291,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="gFm-HD-JK1" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2179.7101449275365" y="65.625"/>
+            <point key="canvasLocation" x="2309" y="66"/>
         </scene>
         <!--Muscles-->
         <scene sceneID="I1Z-ig-BX8">
@@ -320,7 +335,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xzk-6l-wN1" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2805.7971014492755" y="1390.8482142857142"/>
+            <point key="canvasLocation" x="3081" y="1533"/>
         </scene>
         <!--How to?-->
         <scene sceneID="b4E-33-Ey4">
@@ -379,7 +394,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qOV-kU-gem" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2805.7971014492755" y="742.63392857142856"/>
+            <point key="canvasLocation" x="3081" y="802"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="7rj-bX-abg">
@@ -401,7 +416,7 @@
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="8r9-qJ-BpP" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1888" y="1068"/>
+            <point key="canvasLocation" x="2309" y="1161"/>
         </scene>
         <!--Highscore View Controller-->
         <scene sceneID="Xez-WB-sFn">
